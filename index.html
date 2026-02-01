@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EXIF Cleaner</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <script src="lib/exifreader.js"></script>
+</head>
+<body>
+
+    <div class="container">
+        <h1>EXIF Cleaner</h1>
+        <p>Загрузите фото для просмотра и удаления метаданных.</p>
+
+        <div id="drop-zone" class="drop-zone">
+            <p>Перетащите файлы сюда или кликните для выбора</p>
+            <input type="file" id="file-input" multiple accept="image/jpeg, image/png, image/webp">
+        </div>
+
+        <div id="results-container"></div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
