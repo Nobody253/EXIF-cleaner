@@ -23,7 +23,7 @@ async function handleFiles(files) {
     resultsContainer.innerHTML = ''; 
     for (const file of files) {
         if (!file.type.startsWith('image/')) {
-            createErrorItem(file.name, 'Неверный формат файла.');
+            createErrorItem(file.name, 'Неверный формат файла. Выберите изображение.');
             continue;
         }
         await processImage(file);
@@ -33,6 +33,7 @@ async function handleFiles(files) {
 async function processImage(file) {
     const card = document.createElement('div');
     card.className = 'image-card';
+    card.innerHTML = `<div>Обработка ${file.name}...</div>`;
     resultsContainer.appendChild(card);
 
     let exifText = 'Основные EXIF данные не найдены.';
@@ -44,33 +45,64 @@ async function processImage(file) {
         if (tags['DateTimeOriginal']) info.push(`Дата съемки: ${tags['DateTimeOriginal'].description}`);
         if (tags['GPSLatitude'] && tags['GPSLongitude']) info.push(`GPS: ${tags['GPSLatitude'].description}, ${tags['GPSLongitude'].description}`);
         if (info.length > 0) exifText = info.join('<br>');
-    } catch (e) {}
+    } catch (e) {
+        console.warn('Ошибка чтения EXIF', e);
+    }
 
-    const cleanedBlob = await cleanImageMetadata(file);
-    card.innerHTML = `<h3>${file.name}</h3><div class="exif-data">${exifText}</div><button>Скачать без метаданных</button>`;
-    card.querySelector('button').onclick = () => {
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(cleanedBlob);
-        a.download = file.name.replace(/(\.[^.]+)$/, '_cleaned$1');
-        a.click();
-    };
+try {
+        const cleanedBlob = await cleanImageMetadata(file);
+        const previewUrl = URL.createObjectURL(cleanedBlob);
+        
+        card.innerHTML = `
+            <img src="${previewUrl}" class="preview-img" alt="Превью ${file.name}">
+            <div class="card-info">
+                <h3>${file.name}</h3>
+                <div class="exif-data">${exifText}</div>
+                <button id="btn-${file.name.replace(/\s+/g, '')}">Скачать без метаданных</button>
+            </div>
+        `;
+        
+        card.querySelector('button').onclick = () => {
+            const a = document.createElement('a');
+            a.href = previewUrl;
+            a.download = file.name.replace(/(\.[^.]+)$/, '_cleaned$1');
+            a.click();
+        };
+    } catch (error) {
+        card.remove();
+        createErrorItem(file.name, error.message);
+    }
 }
 
 async function cleanImageMetadata(file) {
-    const img = new Image();
-    const url = URL.createObjectURL(file);
-    img.src = url;
-    await new Promise(r => img.onload = r);
-    const canvas = document.createElement('canvas');
-    canvas.width = img.width; canvas.height = img.height;
-    canvas.getContext('2d').drawImage(img, 0, 0);
-    URL.revokeObjectURL(url);
-    return new Promise(r => canvas.toBlob(r, file.type, 1.0));
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        const url = URL.createObjectURL(file);
+        
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width; canvas.height = img.height;
+            canvas.getContext('2d').drawImage(img, 0, 0);
+            URL.revokeObjectURL(url);
+            
+            canvas.toBlob((blob) => {
+                if (blob) resolve(blob);
+                else reject(new Error('Ошибка при создании очищенного файла.'));
+            }, file.type, 1.0);
+        };
+        
+        img.onerror = () => {
+            URL.revokeObjectURL(url);
+            reject(new Error('Файл поврежден или не может быть прочитан как изображение.'));
+        };
+        
+        img.src = url;
+    });
 }
 
 function createErrorItem(name, msg) {
     const div = document.createElement('div');
     div.className = 'image-card error';
-    div.innerHTML = `<strong>${name}</strong>: ${msg}`;
+    div.innerHTML = `<div class="card-info"><strong>${name}</strong>: ${msg}</div>`;
     resultsContainer.appendChild(div);
 }

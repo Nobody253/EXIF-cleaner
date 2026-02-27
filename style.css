@@ -10,52 +10,84 @@ body {
     background: white;
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
+
+h1 { margin-top: 0; color: #1a1a1a; }
 
 .drop-zone {
     border: 2px dashed #ccc;
+    border-radius: 8px;
     padding: 40px;
     text-align: center;
     cursor: pointer;
     margin-bottom: 20px;
     background: #fafafa;
     transition: 0.2s ease;
+    color: #57606a;
 }
 
-.drop-zone.drag-over {
+.drop-zone:hover, .drop-zone.drag-over {
     background: #eef;
-    border-color: #66a;
+    border-color: #0969da;
+    color: #0969da;
 }
 
 #file-input { display: none; }
 
 .image-card {
+    display: flex;
+    gap: 20px;
+    align-items: center;
     border: 1px solid #ddd;
     padding: 15px;
     margin-bottom: 15px;
-    border-radius: 4px;
+    border-radius: 8px;
+    background: #fff;
+    transition: box-shadow 0.2s ease;
 }
 
-.image-card.error { color: red; font-weight: bold; }
+.image-card:hover { box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
+
+.image-card.error { 
+    color: #cf222e; 
+    border-color: #ff8182; 
+    background: #ffebe9; 
+}
+
+.preview-img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 6px;
+    background: #eee;
+}
+
+.card-info { flex: 1; }
+
+.card-info h3 { margin: 0 0 10px 0; font-size: 1.1em; word-break: break-all; }
 
 .exif-data {
     background: #eee;
-    padding: 10px;
+    padding: 10px 15px;
+    border-radius: 6px;
     font-family: monospace;
-    font-size: 0.9em;
-    max-height: 150px;
-    overflow-y: auto;
-    margin: 10px 0;
+    font-size: 0.85em;
+    color: #24292f;
+    margin-bottom: 15px;
+    line-height: 1.4;
 }
 
 button {
     background: #28a745;
     color: white;
     border: none;
-    padding: 10px 15px;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 500;
     cursor: pointer;
-    border-radius: 4px;
+    border-radius: 6px;
+    transition: background 0.2s ease;
 }
 
 button:hover { background: #218838; }
