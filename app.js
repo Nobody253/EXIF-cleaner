@@ -5,6 +5,9 @@ if ('serviceWorker' in navigator) {
 const dropZone = document.getElementById('drop-zone');
 const fileInput = document.getElementById('file-input');
 const resultsContainer = document.getElementById('results-container');
+const batchActions = document.getElementById('batch-actions');
+const downloadZipBtn = document.getElementById('download-zip-btn');
+let processedFilesList = [];
 
 dropZone.onclick = () => fileInput.click();
 dropZone.ondragover = (e) => {
@@ -21,6 +24,8 @@ fileInput.onchange = (e) => handleFiles(e.target.files);
 
 async function handleFiles(files) {
     resultsContainer.innerHTML = ''; 
+    processedFilesList = [];
+    updateBatchActions();
     for (const file of files) {
         if (!file.type.startsWith('image/')) {
             createErrorItem(file.name, 'Неверный формат файла. Выберите изображение.');
@@ -33,7 +38,7 @@ async function handleFiles(files) {
 async function processImage(file) {
     const card = document.createElement('div');
     card.className = 'image-card';
-    card.innerHTML = `<div>Обработка ${file.name}...</div>`;
+    card.innerHTML = `<div class="card-info">Обработка ${file.name}...</div>`;
     resultsContainer.appendChild(card);
 
     let exifText = 'Основные EXIF данные не найдены.';
@@ -52,6 +57,9 @@ async function processImage(file) {
 try {
         const cleanedBlob = await cleanImageMetadata(file);
         const previewUrl = URL.createObjectURL(cleanedBlob);
+        const cleanedFileName = file.name.replace(/(\.[^.]+)$/, '_cleaned$1');
+        processedFilesList.push({ name: cleanedFileName, blob: cleanedBlob });
+        updateBatchActions();
         
         card.innerHTML = `
             <img src="${previewUrl}" class="preview-img" alt="Превью ${file.name}">
@@ -65,7 +73,7 @@ try {
         card.querySelector('button').onclick = () => {
             const a = document.createElement('a');
             a.href = previewUrl;
-            a.download = file.name.replace(/(\.[^.]+)$/, '_cleaned$1');
+            a.download = cleanedFileName;
             a.click();
         };
     } catch (error) {
@@ -106,3 +114,35 @@ function createErrorItem(name, msg) {
     div.innerHTML = `<div class="card-info"><strong>${name}</strong>: ${msg}</div>`;
     resultsContainer.appendChild(div);
 }
+
+function updateBatchActions() {
+    if (processedFilesList.length > 1) {
+        batchActions.classList.remove('hidden');
+    } else {
+        batchActions.classList.add('hidden');
+    }
+}
+
+downloadZipBtn.onclick = async () => {
+    const zip = new JSZip();
+    downloadZipBtn.textContent = 'Архив формируется... Пожалуйста, подождите.';
+    downloadZipBtn.disabled = true;
+    processedFilesList.forEach(item => {
+        zip.file(item.name, item.blob);
+    });
+
+    try {
+        const zipBlob = await zip.generateAsync({ type: 'blob' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(zipBlob);
+        a.download = 'cleaned_images.zip';
+        a.click();
+        URL.revokeObjectURL(a.href);
+    } catch (error) {
+        alert('Ошибка при создании архива.');
+        console.error(error);
+    } finally {
+        downloadZipBtn.textContent = 'Скачать все архивом (ZIP)';
+        downloadZipBtn.disabled = false;
+    }
+};

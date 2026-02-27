@@ -91,3 +91,23 @@ button {
 }
 
 button:hover { background: #218838; }
+
+#batch-actions {
+    margin-bottom: 20px;
+    text-align: center;
+    padding-top: 20px;
+    border-top: 1px solid #e1e4e8;
+}
+
+.hidden { display: none !important; }
+
+#download-zip-btn {
+    background: #28a745;
+    padding: 12px 24px;
+    font-size: 16px;
+    width: 100%;
+    max-width: 400px;
+}
+
+#download-zip-btn:hover { background: #218838; }
+#download-zip-btn:disabled { background: #6e7781; cursor: not-allowed; }

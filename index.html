@@ -10,6 +10,7 @@
     <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
     <link rel="apple-touch-icon" href="icons/icon-192.png">
     <script src="lib/exif-reader.js"></script>
+    <script src="lib/jszip.min.js"></script>
 </head>
 <body>
 
@@ -20,6 +21,10 @@
         <div id="drop-zone" class="drop-zone">
             <p>Перетащите файлы сюда или кликните для выбора</p>
             <input type="file" id="file-input" multiple accept="image/jpeg, image/png, image/webp">
+        </div>
+        
+        <div id="batch-actions" class="hidden">
+            <button id="download-zip-btn">Скачать все архивом (ZIP)</button>
         </div>
 
         <div id="results-container"></div>
