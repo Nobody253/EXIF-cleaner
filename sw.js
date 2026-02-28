@@ -1,4 +1,4 @@
-const CACHE_NAME = 'exifc-v0.2.6';
+const CACHE_NAME = 'exifc-v0.2.7';
 const ASSETS = [
   './',
   './index.html',
