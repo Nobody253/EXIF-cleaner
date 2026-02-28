@@ -1,4 +1,4 @@
-const CACHE_NAME = 'exifc-v0.2.4';
+const CACHE_NAME = 'exifc-v0.2.5';
 const ASSETS = [
   './',
   './index.html',
@@ -7,6 +7,7 @@ const ASSETS = [
   './manifest.json',
   './lib/exif-reader.js',
   './lib/jszip.min.js',
+  './lib/heic2any.min.js',
   './icons/icon-192.png', 
   './icons/icon-512.png'
 ];

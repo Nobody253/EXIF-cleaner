@@ -27,8 +27,8 @@ async function handleFiles(files) {
     processedFilesList = [];
     updateBatchActions();
     for (const file of files) {
-        if (!file.type.startsWith('image/')) {
-            createErrorItem(file.name, 'Неверный формат файла. Выберите изображение.');
+        if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) && !file.name.toLowerCase().match(/\.(heic|heif)$/i)) {
+            createErrorItem(file.name, 'Неверный формат файла. Выберите изображение поддерживаемого формата.');
             continue;
         }
         await processImage(file);
@@ -54,10 +54,21 @@ async function processImage(file) {
         console.warn('Ошибка чтения EXIF', e);
     }
 
-try {
-        const cleanedBlob = await cleanImageMetadata(file);
+    try {
+        let fileToProcess = file;
+        let isHeicConverted = false;
+        if (file.name.toLowerCase().match(/\.(heic|heif)$/i)) {
+            card.innerHTML = `<div class="card-info">Конвертация HEIC/HEIF файла ${file.name} в JPG...</div>`;
+            const convertedBlob = await heic2any({ blob: file, toType: 'image/jpeg' });
+            fileToProcess = Array.isArray(convertedBlob) ? convertedBlob[0] : convertedBlob;
+            isHeicConverted = true;
+        }
+
+        const cleanedBlob = await cleanImageMetadata(fileToProcess);
         const previewUrl = URL.createObjectURL(cleanedBlob);
-        const cleanedFileName = file.name.replace(/(\.[^.]+)$/, '_cleaned$1');
+        let cleanedFileName = file.name;
+        if (isHeicConverted) cleanedFileName = cleanedFileName.replace(/\.(heic|heif)$/i, '.jpg');
+        cleanedFileName = cleanedFileName.replace(/(\.[^.]+)$/, '_cleaned$1');
         processedFilesList.push({ name: cleanedFileName, blob: cleanedBlob });
         updateBatchActions();
         

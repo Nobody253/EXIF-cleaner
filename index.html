@@ -11,16 +11,24 @@
     <link rel="apple-touch-icon" href="icons/icon-192.png">
     <script src="lib/exif-reader.js"></script>
     <script src="lib/jszip.min.js"></script>
+    <script src="lib/heic2any.min.js"></script>
 </head>
 <body>
 
     <div class="container">
         <h1>EXIF Cleaner</h1>
-        <p>Загрузите фото для просмотра и удаления метаданных.</p>
+        <div class="info-banner">
+            <p>Обработка происходит на вашем устройстве без потери качества оригинального изображения.</p>
+        </div>
+        <p>Загрузите фото в формате JPG, PNG, WebP или HEIC/HEIF* для просмотра и удаления метаданных.</p>
 
         <div id="drop-zone" class="drop-zone">
             <p>Перетащите файлы сюда или кликните для выбора</p>
-            <input type="file" id="file-input" multiple accept="image/jpeg, image/png, image/webp">
+            <input type="file" id="file-input" multiple accept="image/jpeg, image/png, image/webp, image/heic, image/heif">
+        </div>
+
+        <div class="conversion-alert">
+            <small>* Файлы HEIC и HEIF будут конвертированы в JPG</small>
         </div>
         
         <div id="batch-actions" class="hidden">

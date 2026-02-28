@@ -102,12 +102,30 @@ button:hover { background: #218838; }
 .hidden { display: none !important; }
 
 #download-zip-btn {
-    background: #28a745;
     padding: 12px 24px;
     font-size: 16px;
     width: 100%;
     max-width: 400px;
 }
 
-#download-zip-btn:hover { background: #218838; }
 #download-zip-btn:disabled { background: #6e7781; cursor: not-allowed; }
+
+.info-banner {
+    background: #e7f3ff;
+    border-left: 4px solid #0969da;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    font-size: 0.95em;
+    color: #1a1a1a;
+}
+
+.conversion-alert {
+    margin-bottom: 20px;
+    text-align: center;
+    color: #57606a;
+}
+
+.conversion-alert small {
+    font-size: 0.8em;
+}
